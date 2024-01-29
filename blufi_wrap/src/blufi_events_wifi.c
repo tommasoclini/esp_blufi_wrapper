@@ -271,9 +271,8 @@ esp_blufi_callbacks_t blufi_example_callbacks = {
 
 static esp_err_t blufi_wrap_send_netif_ip_info(esp_netif_ip_info_t* netif_info, const char* tag){
     char buff[128];
-    esp_err_t ret = esp_netif_get_ip_info(ap_netif, netif_info);
-    if (ret != ESP_OK)
-        return ret;
+    if (netif_info == NULL)
+        return ESP_FAIL;
     int len = snprintf(buff, sizeof(buff), "%s IP: " IPSTR " \r\nGW: " IPSTR "\r\nNMK: " IPSTR, tag, IP2STR(&netif_info->ip), IP2STR(&netif_info->gw), IP2STR(&netif_info->netmask));
     if (len > 0)
         esp_blufi_send_custom_data((unsigned char*)buff, len);
