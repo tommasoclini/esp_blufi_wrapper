@@ -6,9 +6,11 @@
 
 #include <nvs_flash.h>
 
+#include <blufi_wrap.h>
+
 extern esp_blufi_callbacks_t blufi_example_callbacks;
 
-esp_err_t blufi_wrap_init(){
+esp_err_t blufi_wrap_init(bool init_bt_stack){
     esp_err_t ret;
 
     // Initialize NVS
@@ -22,10 +24,12 @@ esp_err_t blufi_wrap_init(){
     initialise_wifi();
 
 #if CONFIG_BT_CONTROLLER_ENABLED || !CONFIG_BT_NIMBLE_ENABLED
-    ret = esp_blufi_controller_init();
-    if (ret) {
-        BLUFI_ERROR("%s BLUFI controller init failed: %s\n", __func__, esp_err_to_name(ret));
-        return ret;
+    if (init_bt_stack){
+        ret = esp_blufi_controller_init();
+        if (ret) {
+            BLUFI_ERROR("%s BLUFI controller init failed: %s\n", __func__, esp_err_to_name(ret));
+            return ret;
+        }
     }
 #endif
 
